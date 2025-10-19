@@ -1,0 +1,122 @@
+{
+  "product_hook": "Our mortgage offers the lowest interest rates for first-time homebuyers in the UAE.",
+  "calendly_link": "https://calendly.com/faiziabkhan1/30min",
+  
+  "states": {
+    "INITIAL": {
+      "message_template": "Hello {name}! This is Alex from ABC Bank. We're reaching out about our new mortgage with the lowest interest rates for first-time homebuyers in the UAE. Would you be interested in a quick 60-second check to see if you're eligible?",
+      "next_state": "AWAITING_INTEREST",
+      "expected_responses": ["yes", "no", "maybe", "interested", "not interested", "sure", "ok", "okay"]
+    },
+    
+    "AWAITING_INTEREST": {
+      "positive_keywords": ["yes", "yeah", "yep", "sure", "ok", "okay", "interested", "definitely", "absolutely"],
+      "negative_keywords": ["no", "nope", "not interested", "don't", "dont", "never"],
+      "on_positive": {
+        "message": "Excellent! Let me ask you a few quick questions to check your eligibility.",
+        "next_state": "QUESTION_1"
+      },
+      "on_negative": {
+        "message": "No problem! If you change your mind, feel free to reach out. Have a great day!",
+        "next_state": "END"
+      },
+      "on_unclear": {
+        "message": "I want to make sure I understand correctly. Are you interested in learning more about our mortgage offer? Please reply with 'Yes' or 'No'.",
+        "next_state": "AWAITING_INTEREST"
+      }
+    },
+    
+    "QUESTION_1": {
+      "message": "Question 1 of 3: Are you a salaried individual or self-employed?",
+      "next_state": "AWAITING_ANSWER_1",
+      "expected_responses": ["salaried", "self-employed", "self employed", "employed", "salary"]
+    },
+    
+    "AWAITING_ANSWER_1": {
+      "valid_responses": {
+        "salaried": ["salaried", "employed", "salary", "employee"],
+        "self-employed": ["self-employed", "self employed", "selfemployed", "business", "entrepreneur"]
+      },
+      "store_as": "employment_type",
+      "on_valid": {
+        "message": "Got it! Next question.",
+        "next_state": "QUESTION_2"
+      },
+      "on_invalid": {
+        "message": "Please specify if you are 'Salaried' or 'Self-employed'.",
+        "next_state": "AWAITING_ANSWER_1"
+      }
+    },
+    
+    "QUESTION_2": {
+      "message": "Question 2 of 3: What is your approximate monthly income in AED?",
+      "next_state": "AWAITING_ANSWER_2",
+      "expected_responses": ["number", "amount"]
+    },
+    
+    "AWAITING_ANSWER_2": {
+      "validation": "numeric",
+      "minimum_income": 5000,
+      "store_as": "monthly_income",
+      "on_valid": {
+        "message": "Thank you! One last question.",
+        "next_state": "QUESTION_3"
+      },
+      "on_invalid": {
+        "message": "Please provide your monthly income as a number (e.g., 15000).",
+        "next_state": "AWAITING_ANSWER_2"
+      },
+      "on_below_minimum": {
+        "message": "Thank you for your interest. Unfortunately, our minimum income requirement is AED 5,000 per month. We appreciate your time!",
+        "next_state": "END"
+      }
+    },
+    
+    "QUESTION_3": {
+      "message": "Question 3 of 3: Are you a UAE national or an expatriate resident?",
+      "next_state": "AWAITING_ANSWER_3",
+      "expected_responses": ["uae national", "national", "expatriate", "expat", "resident"]
+    },
+    
+    "AWAITING_ANSWER_3": {
+      "valid_responses": {
+        "uae_national": ["uae national", "national", "citizen", "emirati"],
+        "expatriate": ["expatriate", "expat", "resident", "foreigner", "ex-pat"]
+      },
+      "store_as": "residency_status",
+      "on_valid": {
+        "next_state": "EVALUATE_ELIGIBILITY"
+      },
+      "on_invalid": {
+        "message": "Please specify if you are a 'UAE National' or 'Expatriate Resident'.",
+        "next_state": "AWAITING_ANSWER_3"
+      }
+    },
+    
+    "EVALUATE_ELIGIBILITY": {
+      "qualification_rules": {
+        "employment_type": ["salaried", "self-employed"],
+        "monthly_income_minimum": 5000,
+        "residency_status": ["uae_national", "expatriate"]
+      },
+      "on_qualified": {
+        "message_template": "Great! Based on your answers, you're a good candidate. Please book a call with a mortgage specialist at your convenience here: {calendly_link}",
+        "next_state": "END"
+      },
+      "on_not_qualified": {
+        "message": "Thank you for your time! Unfortunately, you don't meet our current eligibility criteria. We'll keep your information and reach out if our requirements change.",
+        "next_state": "END"
+      }
+    },
+    
+    "END": {
+      "conversation_complete": true
+    }
+  },
+  
+  "error_handling": {
+    "max_retries": 2,
+    "unclear_response_message": "I didn't quite understand that. Could you please rephrase your answer?",
+    "technical_error_message": "I'm experiencing technical difficulties. A team member will reach out to you shortly. Thank you for your patience!"
+  }
+}

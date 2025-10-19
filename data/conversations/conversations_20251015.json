@@ -1,0 +1,13 @@
+{
+  "whatsapp:+971585378637": {
+    "current_state": "END",
+    "conversation_data": {
+      "employment_type": "salaried",
+      "monthly_income": 15000,
+      "residency_status": "expatriate"
+    },
+    "message_count": 9,
+    "retry_count": 0,
+    "outcome": "qualified"
+  }
+}
